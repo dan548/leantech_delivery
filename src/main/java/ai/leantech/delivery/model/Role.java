@@ -2,21 +2,18 @@ package ai.leantech.delivery.model;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-
 import javax.persistence.*;
 
-@Data
 @Entity
-@Table (name = "products")
-public class Product {
+@Table(name = "roles")
+@Data
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Integer id;
 
-    @NotNull
+    @Column
     private String name;
-    private int price;
 
 }

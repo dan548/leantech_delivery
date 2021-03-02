@@ -1,5 +1,13 @@
+server:
+  port: 8087
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: post210718@gres
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+jwt:
+  issuer: 'd.poliakov@yahoo.com'
+  signingKey: '210718sECret228'
