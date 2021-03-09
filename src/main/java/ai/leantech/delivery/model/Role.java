@@ -3,6 +3,7 @@ package ai.leantech.delivery.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "roles")
@@ -15,5 +16,8 @@ public class Role {
 
     @Column
     private String name;
+
+    @ManyToMany(mappedBy = "roles")
+    private Set<User> users;
 
 }

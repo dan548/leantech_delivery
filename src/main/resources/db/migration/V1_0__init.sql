@@ -11,7 +11,7 @@ CREATE TABLE roles (
 
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
-    login TEXT,
+    login TEXT NOT NULL UNIQUE,
     password TEXT,
     role_id BIGINT REFERENCES roles
 );

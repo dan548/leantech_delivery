@@ -4,6 +4,7 @@ import ai.leantech.delivery.config.jwt.JwtProvider;
 import ai.leantech.delivery.controller.model.AuthRequest;
 import ai.leantech.delivery.controller.model.AuthResponse;
 import ai.leantech.delivery.controller.model.RegistrationRequest;
+import ai.leantech.delivery.model.RoleType;
 import ai.leantech.delivery.model.User;
 import ai.leantech.delivery.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +29,7 @@ public class AuthController {
         User u = new User();
         u.setPassword(registrationRequest.getPassword());
         u.setLogin(registrationRequest.getLogin());
-        userService.saveUser(u);
+        userService.addNewUser(u, RoleType.CUSTOMER);
         return "OK";
     }
 
