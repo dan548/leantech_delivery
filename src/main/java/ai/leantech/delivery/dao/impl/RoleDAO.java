@@ -18,6 +18,12 @@ public class RoleDAO extends AbstractJpaDAO<Role> implements IRoleDAO {
 
     @Override
     public Role findByName(String role) {
-        return null;
+        return entityManager.createQuery(
+                "SELECT r FROM Role r WHERE r.name LIKE :role", Role.class)
+                .setParameter("role", role)
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 }

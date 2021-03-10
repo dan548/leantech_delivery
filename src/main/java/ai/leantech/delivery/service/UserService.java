@@ -7,10 +7,12 @@ import ai.leantech.delivery.model.RoleType;
 import ai.leantech.delivery.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
 @Service
+@Transactional
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
@@ -33,8 +35,9 @@ public class UserService {
         roleDAO.update(userRole);
     }
 
+    @Transactional
     public User findByLogin(String login) {
-        return userDAO.findByLogin(login);
+        return userDAO. findByLogin(login);
     }
 
     public User findByLoginAndPassword(String login, String password) {

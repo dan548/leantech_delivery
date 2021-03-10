@@ -1,6 +1,7 @@
 package ai.leantech.delivery.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.Set;
 @Entity
 @Table(name = "roles")
 @Data
+@EqualsAndHashCode(exclude="users")
 public class Role {
 
     @Id

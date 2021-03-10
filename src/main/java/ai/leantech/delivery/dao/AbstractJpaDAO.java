@@ -10,7 +10,7 @@ public abstract class AbstractJpaDAO<T> {
     private Class<T> clazz;
 
     @PersistenceContext
-    EntityManager entityManager;
+    public EntityManager entityManager;
 
     public final void setClazz(Class<T> clazzToSet) {
         this.clazz = clazzToSet;

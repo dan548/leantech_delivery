@@ -18,6 +18,12 @@ public class UserDAO extends AbstractJpaDAO<User> implements IUserDAO {
 
     @Override
     public User findByLogin(String login) {
-        return null;
+        return entityManager.createQuery(
+                "SELECT u FROM User u WHERE u.login LIKE :username", User.class)
+                .setParameter("username", login)
+                .getResultList()
+                .stream()
+                .findFirst()
+                .orElse(null);
     }
 }

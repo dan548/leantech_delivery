@@ -6,7 +6,7 @@ CREATE TABLE products (
 
 CREATE TABLE roles (
     id BIGSERIAL PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE users (
