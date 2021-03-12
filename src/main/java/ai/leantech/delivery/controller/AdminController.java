@@ -1,36 +1,37 @@
 package ai.leantech.delivery.controller;
 
-import ai.leantech.delivery.model.Order;
+import ai.leantech.delivery.controller.model.order.OrderResponse;
 import ai.leantech.delivery.service.OrderService;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import ai.leantech.delivery.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
 
-    private final OrderService service;
+    private final OrderService orderService;
+    private final UserService userService;
 
-    public AdminController(final OrderService service) {
-        this.service = service;
+    public AdminController(final OrderService orderService, final UserService userService) {
+        this.orderService = orderService;
+        this.userService = userService;
     }
 
-    @RequestMapping(value = "/orders", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<List<Order>> getAllOrders(
-            final @RequestParam(name = "status", defaultValue = "done") String status,
-            final @RequestParam(name = "order", defaultValue = "desc") String order,
-            final @RequestParam(name = "page", defaultValue = "1") Integer page,
-            final @RequestParam(name = "size", defaultValue = "25") Integer size
+    @GetMapping("/orders")
+    public List<OrderResponse> getAllOrders(
+            @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "payment_type", required = false) String paymentType,
+            @RequestParam(name = "customer", required = false) Long customerId,
+            @RequestParam(name = "courier", required = false) Long courierId,
+            @RequestParam(name = "page", defaultValue = "1") Integer offset,
+            @RequestParam(name = "size", defaultValue = "25") Integer limit,
+            @RequestParam(name = "order", defaultValue = "desc") String order
+
     ) {
-        return ResponseEntity.ok(service.getOrders(status, order, page, size));
+        return orderService.getOrders(status, paymentType, customerId, courierId, offset, limit, order);
     }
-
-
 
 }
