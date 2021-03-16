@@ -1,5 +1,6 @@
 package ai.leantech.delivery.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class OrderItem {
     private Product product;
     @ManyToOne
     @PrimaryKeyJoinColumn(name="order_id", referencedColumnName="id")
+    @JsonIgnoreProperties("orderItems")
     private Order order;
 
 }

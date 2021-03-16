@@ -41,14 +41,19 @@
             <version>0.9.1</version>
         </dependency>
         <dependency>
+            <groupId>com.github.java-json-tools</groupId>
+            <artifactId>json-patch</artifactId>
+            <version>1.13</version>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>5.4.28.Final</version>
+            <version>5.4.29.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>5.4.28.Final</version>
+            <version>5.4.29.Final</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

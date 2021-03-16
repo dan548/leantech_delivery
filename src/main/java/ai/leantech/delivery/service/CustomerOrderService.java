@@ -55,6 +55,7 @@ public class CustomerOrderService {
                         .created(o.getCreatedAt())
                         .updated(o.getUpdatedAt())
                         .status(o.getStatus())
+                        .items(o.getOrderItems())
                         .build())
                 .collect(toList());
     }
