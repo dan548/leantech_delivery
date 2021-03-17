@@ -8,8 +8,6 @@ import ai.leantech.delivery.service.AdminOrderService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.http.HttpStatus;
@@ -27,12 +25,11 @@ import java.util.List;
 public class AdminOrderController {
 
     private final AdminOrderService adminOrderService;
-    private final ObjectMapper objectMapper = JsonMapper.builder()
-            .addModule(new JavaTimeModule())
-            .build();
+    private final ObjectMapper objectMapper;
 
-    public AdminOrderController(final AdminOrderService adminOrderService) {
+    public AdminOrderController(final AdminOrderService adminOrderService, final ObjectMapper objectMapper) {
         this.adminOrderService = adminOrderService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping()
@@ -75,7 +72,7 @@ public class AdminOrderController {
             Order orderPatched = applyPatchToOrder(patch, order);
             adminOrderService.updateOrder(orderPatched);
             return ResponseEntity.ok(OrderDtoConverter.convertOrderToOrderResp(orderPatched));
-        } catch (Exception e) {
+        } catch (JsonPatchException | JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
