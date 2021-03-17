@@ -3,6 +3,7 @@ package ai.leantech.delivery.controller.model.order;
 import ai.leantech.delivery.model.OrderItem;
 import ai.leantech.delivery.model.OrderStatus;
 import ai.leantech.delivery.model.PaymentType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,7 +18,9 @@ public class OrderResponse {
     private PaymentType paymentType;
     private OrderStatus status;
     private String address;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")
     private OffsetDateTime created;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")
     private OffsetDateTime updated;
     private List<OrderItem> items;
 

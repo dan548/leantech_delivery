@@ -16,11 +16,6 @@ public enum PaymentType {
         return string;
     }
 
-    public static boolean isType(final String type) {
-        return Arrays.stream(values())
-                .anyMatch(x -> x.toString().equals(type));
-    }
-
     public static PaymentType findTypeByName(final String typeName) {
         return Arrays.stream(values())
                 .filter(x -> x.toString().equals(typeName))

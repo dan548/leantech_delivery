@@ -1,13 +1,15 @@
 package ai.leantech.delivery.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
 @Data
 @Entity
 @Table(name="order_items")
+@EqualsAndHashCode(exclude="order")
 public class OrderItem {
 
     @Id
@@ -18,7 +20,7 @@ public class OrderItem {
     private Product product;
     @ManyToOne
     @PrimaryKeyJoinColumn(name="order_id", referencedColumnName="id")
-    @JsonIgnoreProperties("orderItems")
+    @JsonBackReference
     private Order order;
 
 }

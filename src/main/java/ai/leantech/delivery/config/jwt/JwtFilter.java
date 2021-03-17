@@ -2,7 +2,7 @@ package ai.leantech.delivery.config.jwt;
 
 import ai.leantech.delivery.config.CustomUserDetails;
 import ai.leantech.delivery.config.CustomUserDetailsService;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import static org.springframework.util.StringUtils.hasText;
 
 @Component
-@Log
+@Slf4j
 public class JwtFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION = "Authorization";

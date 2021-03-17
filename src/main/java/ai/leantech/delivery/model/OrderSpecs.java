@@ -1,10 +1,12 @@
 package ai.leantech.delivery.model;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 
+@UtilityClass
 public class OrderSpecs {
 
-    public static Specification<Order> hasCustomerWithId(Long customerId) {
+    public Specification<Order> hasCustomerWithId(Long customerId) {
         return (root, query, builder) -> {
             if (customerId == null) {
                 return builder.conjunction();
@@ -13,7 +15,7 @@ public class OrderSpecs {
         };
     }
 
-    public static Specification<Order> hasCourierWithId(Long courierId) {
+    public Specification<Order> hasCourierWithId(Long courierId) {
         return (root, query, builder) -> {
             if (courierId == null) {
                 return builder.conjunction();
@@ -22,7 +24,7 @@ public class OrderSpecs {
         };
     }
 
-    public static Specification<Order> isStatus(OrderStatus status) {
+    public Specification<Order> isStatus(OrderStatus status) {
         return (root, query, builder) -> {
             if (status == null) {
                 return builder.conjunction();
@@ -31,7 +33,7 @@ public class OrderSpecs {
         };
     }
 
-    public static Specification<Order> isPaymentType(PaymentType type) {
+    public Specification<Order> isPaymentType(PaymentType type) {
         return (root, query, builder) -> {
             if (type == null) {
                 return builder.conjunction();

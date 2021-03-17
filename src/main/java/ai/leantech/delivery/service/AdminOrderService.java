@@ -7,6 +7,11 @@ import ai.leantech.delivery.model.Order;
 import ai.leantech.delivery.model.OrderStatus;
 import ai.leantech.delivery.model.PaymentType;
 import ai.leantech.delivery.repository.OrderRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,13 +28,19 @@ import static java.util.stream.Collectors.toList;
 public class AdminOrderService {
 
     private final OrderRepository orderRepository;
+    private final ObjectMapper objectMapper;
+    private final OrderDtoConverter orderDtoConverter;
 
-    public AdminOrderService(final OrderRepository orderRepository) {
+    public AdminOrderService(final OrderRepository orderRepository,
+                             final ObjectMapper objectMapper,
+                             final OrderDtoConverter orderDtoConverter) {
         this.orderRepository = orderRepository;
+        this.objectMapper = objectMapper;
+        this.orderDtoConverter = orderDtoConverter;
     }
 
     public Order createOrder(AdminOrderRequest request) {
-        Order order = OrderDtoConverter.convertDtoToOrder(request);
+        Order order = orderDtoConverter.convertDtoToOrder(request);
         OffsetDateTime now = OffsetDateTime.now();
         order.setCreatedAt(now);
         order.setUpdatedAt(now);
@@ -65,15 +76,21 @@ public class AdminOrderService {
     }
 
     public Optional<OrderResponse> getOrderById(Long id) {
-        return orderRepository.findById(id).map(OrderDtoConverter::convertOrderToOrderResp);
+        return orderRepository.findById(id).map(orderDtoConverter::convertOrderToOrderResp);
     }
 
     public Optional<Order> getOrderEntityById(Long id) {
         return orderRepository.findById(id);
     }
 
-    public void updateOrder(Order newOrder) {
+    public OrderResponse updateOrder(Order order, JsonPatch patch) throws JsonPatchException, JsonProcessingException {
+        Order newOrder = applyPatchToOrder(patch, order);
         newOrder.setUpdatedAt(OffsetDateTime.now());
-        orderRepository.save(newOrder);
+        return orderDtoConverter.convertOrderToOrderResp(orderRepository.save(newOrder));
+    }
+
+    private Order applyPatchToOrder(JsonPatch patch, Order targetOrder) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = patch.apply(objectMapper.convertValue(targetOrder, JsonNode.class));
+        return objectMapper.treeToValue(patched, Order.class);
     }
 }

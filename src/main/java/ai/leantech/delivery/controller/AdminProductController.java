@@ -4,7 +4,6 @@ import ai.leantech.delivery.controller.model.product.AdminProductRequest;
 import ai.leantech.delivery.controller.model.product.ProductResponse;
 import ai.leantech.delivery.model.Product;
 import ai.leantech.delivery.service.ProductService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -17,7 +16,6 @@ import java.util.List;
 public class AdminProductController {
 
     private final ProductService productService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public AdminProductController(final ProductService productService) {
         this.productService = productService;
@@ -29,7 +27,7 @@ public class AdminProductController {
     }
 
     @PostMapping()
-    public ResponseEntity create(@RequestBody AdminProductRequest request) {
+    public ResponseEntity<Void> create(@RequestBody AdminProductRequest request) {
         Product createdProduct = productService.createProduct(request);
         URI location = UriComponentsBuilder.fromPath("/api/admin/products/")
                 .path(String.valueOf(createdProduct.getId()))

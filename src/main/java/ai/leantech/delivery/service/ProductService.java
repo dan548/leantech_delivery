@@ -13,19 +13,21 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository prodRepo;
+    private final ProductDtoConverter dtoConverter;
 
-    public ProductService(final ProductRepository prodRepo) {
+    public ProductService(final ProductRepository prodRepo, final ProductDtoConverter dtoConverter) {
         this.prodRepo = prodRepo;
+        this.dtoConverter = dtoConverter;
     }
 
     public List<ProductResponse> getProducts() {
         return prodRepo.findAll().stream()
-                .map(ProductDtoConverter::convertProductToProductResp)
+                .map(dtoConverter::convertProductToProductResp)
                 .collect(Collectors.toList());
     }
 
     public Product createProduct(AdminProductRequest request) {
-        Product product = ProductDtoConverter.convertDtoToProduct(request);
+        Product product = dtoConverter.convertDtoToProduct(request);
         return prodRepo.save(product);
     }
 }

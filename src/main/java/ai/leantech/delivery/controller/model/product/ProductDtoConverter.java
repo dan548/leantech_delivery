@@ -4,7 +4,7 @@ import ai.leantech.delivery.model.Product;
 
 public class ProductDtoConverter {
 
-    public static ProductResponse convertProductToProductResp(Product product) {
+    public ProductResponse convertProductToProductResp(Product product) {
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -12,7 +12,7 @@ public class ProductDtoConverter {
                 .build();
     }
 
-    public static Product convertDtoToProduct(AdminProductRequest dto) {
+    public Product convertDtoToProduct(AdminProductRequest dto) {
         Product product = new Product();
         product.setPrice(dto.getPrice());
         product.setName(dto.getName());

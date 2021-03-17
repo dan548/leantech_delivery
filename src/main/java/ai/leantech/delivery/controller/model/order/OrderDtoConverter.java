@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class OrderDtoConverter {
 
-    public static OrderResponse convertOrderToOrderResp(Order order) {
+    public OrderResponse convertOrderToOrderResp(Order order) {
         return OrderResponse.builder()
                 .id(order.getId())
                 .address(order.getAddress())
@@ -19,7 +19,7 @@ public class OrderDtoConverter {
                 .build();
     }
 
-    public static Order convertDtoToOrder(AdminOrderRequest dto) {
+    public Order convertDtoToOrder(AdminOrderRequest dto) {
         Order order = new Order();
         order.setPaymentType(PaymentType.findTypeByName(dto.getPaymentType()));
         order.setAddress(dto.getAddress());
@@ -36,14 +36,14 @@ public class OrderDtoConverter {
         }
 
         List<OrderItem> items = dto.getItems().stream()
-                .map(OrderDtoConverter::convertOrderItemDtoToItem)
+                .map(this::convertOrderItemDtoToItem)
                 .collect(Collectors.toList());
         items.forEach(item -> item.setOrder(order));
         order.setOrderItems(items);
         return order;
     }
 
-    public static OrderItem convertOrderItemDtoToItem(OrderItemRequest dto) {
+    public OrderItem convertOrderItemDtoToItem(OrderItemRequest dto) {
         OrderItem item = new OrderItem();
         Product prod = new Product();
         prod.setId(dto.getProductId());

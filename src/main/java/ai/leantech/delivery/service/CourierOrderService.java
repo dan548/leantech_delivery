@@ -1,34 +1,31 @@
 package ai.leantech.delivery.service;
 
 import ai.leantech.delivery.controller.model.order.OrderResponse;
+import ai.leantech.delivery.model.OrderSpecs;
 import ai.leantech.delivery.model.OrderStatus;
 import ai.leantech.delivery.model.PaymentType;
 import ai.leantech.delivery.model.User;
 import ai.leantech.delivery.repository.OrderRepository;
-import ai.leantech.delivery.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static ai.leantech.delivery.model.OrderSpecs.*;
-import static ai.leantech.delivery.model.OrderSpecs.isStatus;
 import static java.util.stream.Collectors.toList;
 
 @Service
 public class CourierOrderService {
 
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public CourierOrderService(final OrderRepository orderRepository, final UserRepository userRepository) {
+    public CourierOrderService(final OrderRepository orderRepository, final UserService userService) {
         this.orderRepository = orderRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     public List<OrderResponse> getOrders(String status,
@@ -37,15 +34,14 @@ public class CourierOrderService {
                                          Integer offset,
                                          Integer limit,
                                          String sortDirection) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String login = principal instanceof UserDetails ? ((UserDetails) principal).getUsername() : principal.toString();
-        User user = userRepository.findByLogin(login);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.getUserByAuthentication(auth);
         Pageable page = PageRequest.of(offset, limit, Sort.Direction.fromString(sortDirection));
         return orderRepository.findAll(
-                hasCustomerWithId(customerId)
-                        .and(hasCourierWithId(user.getId()))
-                        .and(isPaymentType(PaymentType.findTypeByName(paymentType)))
-                        .and(isStatus(OrderStatus.findStatusByName(status))),
+                OrderSpecs.hasCustomerWithId(customerId)
+                        .and(OrderSpecs.hasCourierWithId(user.getId()))
+                        .and(OrderSpecs.isPaymentType(PaymentType.findTypeByName(paymentType)))
+                        .and(OrderSpecs.isStatus(OrderStatus.findStatusByName(status))),
                 page)
                 .get()
                 .map(o -> OrderResponse.builder()
