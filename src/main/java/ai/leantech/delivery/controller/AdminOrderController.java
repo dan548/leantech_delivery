@@ -5,10 +5,11 @@ import ai.leantech.delivery.controller.model.order.OrderDtoConverter;
 import ai.leantech.delivery.controller.model.order.OrderResponse;
 import ai.leantech.delivery.model.Order;
 import ai.leantech.delivery.service.AdminOrderService;
-import ai.leantech.delivery.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,9 @@ import java.util.List;
 public class AdminOrderController {
 
     private final AdminOrderService adminOrderService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .build();
 
     public AdminOrderController(final AdminOrderService adminOrderService) {
         this.adminOrderService = adminOrderService;
@@ -54,7 +57,7 @@ public class AdminOrderController {
     }
 
     @PostMapping()
-    public ResponseEntity create(@RequestBody AdminOrderRequest request) {
+    public ResponseEntity<Void> create(@RequestBody AdminOrderRequest request) {
         Order createdOrder = adminOrderService.createOrder(request);
         URI location = UriComponentsBuilder.fromPath("/api/admin/orders/")
                 .path(String.valueOf(createdOrder.getId()))
@@ -64,7 +67,7 @@ public class AdminOrderController {
     }
 
     @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
-    public ResponseEntity<OrderResponse> editOrderById(@PathVariable Long id, JsonPatch patch) {
+    public ResponseEntity<OrderResponse> editOrderById(@PathVariable Long id, @RequestBody JsonPatch patch) {
         try {
             Order order = adminOrderService.getOrderEntityById(id).orElseThrow(
                     () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
@@ -72,13 +75,12 @@ public class AdminOrderController {
             Order orderPatched = applyPatchToOrder(patch, order);
             adminOrderService.updateOrder(orderPatched);
             return ResponseEntity.ok(OrderDtoConverter.convertOrderToOrderResp(orderPatched));
-        } catch (JsonPatchException | JsonProcessingException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    private Order applyPatchToOrder(
-            JsonPatch patch, Order targetOrder) throws JsonPatchException, JsonProcessingException {
+    private Order applyPatchToOrder(JsonPatch patch, Order targetOrder) throws JsonPatchException, JsonProcessingException {
         JsonNode patched = patch.apply(objectMapper.convertValue(targetOrder, JsonNode.class));
         return objectMapper.treeToValue(patched, Order.class);
     }
