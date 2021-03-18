@@ -1,11 +1,9 @@
 package ai.leantech.delivery.controller;
 
 import ai.leantech.delivery.controller.model.order.OrderResponse;
+import ai.leantech.delivery.exception.NoSuchOrderStatusException;
 import ai.leantech.delivery.service.CourierOrderService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,5 +28,16 @@ public class CourierController {
 
     ) {
         return courierOrderService.getOrders(status, paymentType, customerId, offset, limit, order);
+    }
+
+    @GetMapping("/{id}")
+    public OrderResponse getOrderById(@PathVariable Long id) {
+        return courierOrderService.getOrderById(id);
+    }
+
+    @PatchMapping("/{id}/status")
+    public String editOrderStatus(@PathVariable Long id, @RequestBody String status) throws NoSuchOrderStatusException {
+        courierOrderService.editOrderStatus(id, status);
+        return status;
     }
 }

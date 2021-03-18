@@ -1,9 +1,13 @@
 package ai.leantech.delivery.controller;
 
+import ai.leantech.delivery.controller.model.order.OrderResponse;
 import ai.leantech.delivery.controller.model.product.AdminProductRequest;
 import ai.leantech.delivery.controller.model.product.ProductResponse;
 import ai.leantech.delivery.model.Product;
 import ai.leantech.delivery.service.ProductService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,5 +38,21 @@ public class AdminProductController {
                 .build()
                 .toUri();
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/{id}")
+    public ProductResponse getProductById(@PathVariable Long id) {
+        return productService.getProductById(id);
+    }
+
+    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
+    public ProductResponse editProductById(@PathVariable Long id, @RequestBody JsonPatch patch)
+            throws JsonPatchException, JsonProcessingException {
+        return productService.updateProduct(id, patch);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
     }
 }

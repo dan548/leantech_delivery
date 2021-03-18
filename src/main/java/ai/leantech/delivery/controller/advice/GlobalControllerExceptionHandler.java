@@ -1,6 +1,7 @@
 package ai.leantech.delivery.controller.advice;
 
 import ai.leantech.delivery.controller.model.ErrorResponse;
+import ai.leantech.delivery.exception.NoSuchOrderStatusException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,14 @@ import javax.persistence.EntityNotFoundException;
 @Slf4j
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NoSuchOrderStatusException.class)
+    public ErrorResponse handleNoSuchOrderStatusException(NoSuchOrderStatusException ex) {
+        log.info(ex.getMessage());
+        return new ErrorResponse(ex.getMessage());
+    }
 
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)

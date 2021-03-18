@@ -31,17 +31,20 @@ public class AdminOrderService {
     private final OrderRepository orderRepository;
     private final ObjectMapper objectMapper;
     private final OrderDtoConverter orderDtoConverter;
+    private final EntityByDtoService entityByDtoService;
 
     public AdminOrderService(final OrderRepository orderRepository,
                              final ObjectMapper objectMapper,
-                             final OrderDtoConverter orderDtoConverter) {
+                             final OrderDtoConverter orderDtoConverter,
+                             final EntityByDtoService entityByDtoService) {
         this.orderRepository = orderRepository;
         this.objectMapper = objectMapper;
         this.orderDtoConverter = orderDtoConverter;
+        this.entityByDtoService = entityByDtoService;
     }
 
     public Order createOrder(AdminOrderRequest request) {
-        Order order = orderDtoConverter.convertDtoToOrder(request);
+        Order order = entityByDtoService.convertDtoToOrder(request);
         OffsetDateTime now = OffsetDateTime.now();
         order.setCreatedAt(now);
         order.setUpdatedAt(now);
@@ -98,5 +101,9 @@ public class AdminOrderService {
     private Order applyPatchToOrder(JsonPatch patch, Order targetOrder) throws JsonPatchException, JsonProcessingException {
         JsonNode patched = patch.apply(objectMapper.convertValue(targetOrder, JsonNode.class));
         return objectMapper.treeToValue(patched, Order.class);
+    }
+
+    public void deleteOrder(Long id) {
+        orderRepository.deleteById(id);
     }
 }

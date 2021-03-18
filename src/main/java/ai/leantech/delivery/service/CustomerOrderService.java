@@ -1,10 +1,10 @@
 package ai.leantech.delivery.service;
 
+import ai.leantech.delivery.controller.model.order.CustomerOrderRequest;
+import ai.leantech.delivery.controller.model.order.OrderDtoConverter;
 import ai.leantech.delivery.controller.model.order.OrderResponse;
-import ai.leantech.delivery.model.OrderSpecs;
-import ai.leantech.delivery.model.OrderStatus;
-import ai.leantech.delivery.model.PaymentType;
-import ai.leantech.delivery.model.User;
+import ai.leantech.delivery.model.*;
+import ai.leantech.delivery.repository.OrderItemRepository;
 import ai.leantech.delivery.repository.OrderRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -21,11 +23,21 @@ import static java.util.stream.Collectors.toList;
 public class CustomerOrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final UserService userService;
+    private final OrderDtoConverter orderDtoConverter;
+    private final EntityByDtoService entityByDtoService;
 
-    public CustomerOrderService(final OrderRepository orderRepository, final UserService userService) {
+    public CustomerOrderService(final OrderRepository orderRepository,
+                                final OrderItemRepository orderItemRepository,
+                                final UserService userService,
+                                final OrderDtoConverter orderDtoConverter,
+                                final EntityByDtoService entityByDtoService) {
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
         this.userService = userService;
+        this.orderDtoConverter = orderDtoConverter;
+        this.entityByDtoService = entityByDtoService;
     }
 
     public List<OrderResponse> getOrders(String status,
@@ -56,4 +68,26 @@ public class CustomerOrderService {
                 .collect(toList());
     }
 
+    public Order createOrder(CustomerOrderRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.getUserByAuthentication(auth);
+        Order order = entityByDtoService.convertDtoToOrder(request);
+        OffsetDateTime now = OffsetDateTime.now();
+        order.setCreatedAt(now);
+        order.setUpdatedAt(now);
+        order.setStatus(OrderStatus.CREATED);
+        order.setClient(user);
+        Order result = orderRepository.save(order);
+        order.getOrderItems().forEach(it -> {
+            it.setOrder(result);
+            orderItemRepository.save(it);
+        });
+        return result;
+    }
+
+    public OrderResponse getOrderById(Long id) {
+        return orderRepository.findById(id).map(orderDtoConverter::convertOrderToOrderResp).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Order with id %s not found", id))
+        );
+    }
 }

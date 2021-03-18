@@ -2,6 +2,7 @@ package ai.leantech.delivery.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -9,10 +10,12 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "users")
+@EqualsAndHashCode
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Exclude
     private Long id;
 
     @Column
@@ -27,6 +30,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     @JsonManagedReference
+    @EqualsAndHashCode.Exclude
     private Set<Role> roles;
 
 }

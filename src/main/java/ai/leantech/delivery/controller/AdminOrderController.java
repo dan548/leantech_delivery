@@ -39,11 +39,6 @@ public class AdminOrderController {
         return adminOrderService.getOrders(status, paymentType, customerId, courierId, offset, limit, order);
     }
 
-    @GetMapping("/{id}")
-    public OrderResponse getOrderById(@PathVariable Long id) {
-        return adminOrderService.getOrderById(id);
-    }
-
     @PostMapping()
     public ResponseEntity<Void> create(@RequestBody AdminOrderRequest request) {
         Order createdOrder = adminOrderService.createOrder(request);
@@ -54,10 +49,20 @@ public class AdminOrderController {
         return ResponseEntity.created(location).build();
     }
 
+    @GetMapping("/{id}")
+    public OrderResponse getOrderById(@PathVariable Long id) {
+        return adminOrderService.getOrderById(id);
+    }
+
     @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
     public OrderResponse editOrderById(@PathVariable Long id, @RequestBody JsonPatch patch)
             throws JsonPatchException, JsonProcessingException {
         return adminOrderService.updateOrder(id, patch);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public void deleteOrderById(@PathVariable Long id) {
+        adminOrderService.deleteOrder(id);
     }
 
 }
