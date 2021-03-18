@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -75,15 +76,20 @@ public class AdminOrderService {
                 .collect(toList());
     }
 
-    public Optional<OrderResponse> getOrderById(Long id) {
-        return orderRepository.findById(id).map(orderDtoConverter::convertOrderToOrderResp);
+    public OrderResponse getOrderById(Long id) {
+        return orderRepository.findById(id).map(orderDtoConverter::convertOrderToOrderResp).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Order with id %s not found", id))
+        );
     }
 
     public Optional<Order> getOrderEntityById(Long id) {
         return orderRepository.findById(id);
     }
 
-    public OrderResponse updateOrder(Order order, JsonPatch patch) throws JsonPatchException, JsonProcessingException {
+    public OrderResponse updateOrder(Long id, JsonPatch patch) throws JsonPatchException, JsonProcessingException {
+        Order order = getOrderEntityById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Order with id %s not found", id))
+        );
         Order newOrder = applyPatchToOrder(patch, order);
         newOrder.setUpdatedAt(OffsetDateTime.now());
         return orderDtoConverter.convertOrderToOrderResp(orderRepository.save(newOrder));

@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.EntityNotFoundException;
 import java.net.URI;
 import java.util.List;
 
@@ -42,9 +41,7 @@ public class AdminOrderController {
 
     @GetMapping("/{id}")
     public OrderResponse getOrderById(@PathVariable Long id) {
-        return adminOrderService.getOrderById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Order with id %s not found", id))
-        );
+        return adminOrderService.getOrderById(id);
     }
 
     @PostMapping()
@@ -60,10 +57,7 @@ public class AdminOrderController {
     @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
     public OrderResponse editOrderById(@PathVariable Long id, @RequestBody JsonPatch patch)
             throws JsonPatchException, JsonProcessingException {
-        Order order = adminOrderService.getOrderEntityById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Order with id %s not found", id))
-        );
-        return adminOrderService.updateOrder(order, patch);
+        return adminOrderService.updateOrder(id, patch);
     }
 
 }
