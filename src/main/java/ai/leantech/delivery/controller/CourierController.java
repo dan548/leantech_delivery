@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/courier")
+@RequestMapping("/api/courier/orders")
 public class CourierController {
 
     private final CourierOrderService courierOrderService;
@@ -17,12 +17,12 @@ public class CourierController {
         this.courierOrderService = courierOrderService;
     }
 
-    @GetMapping("/orders")
+    @GetMapping()
     public List<OrderResponse> getAllOrders(
             @RequestParam(name = "status", required = false) String status,
             @RequestParam(name = "payment_type", required = false) String paymentType,
             @RequestParam(name = "customer", required = false) Long customerId,
-            @RequestParam(name = "page", defaultValue = "1") Integer offset,
+            @RequestParam(name = "page", defaultValue = "0") Integer offset,
             @RequestParam(name = "size", defaultValue = "25") Integer limit,
             @RequestParam(name = "order", defaultValue = "desc") String order
 

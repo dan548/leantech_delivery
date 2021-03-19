@@ -3,7 +3,6 @@ package ai.leantech.delivery.service;
 import ai.leantech.delivery.controller.model.product.AdminProductRequest;
 import ai.leantech.delivery.controller.model.product.ProductDtoConverter;
 import ai.leantech.delivery.controller.model.product.ProductResponse;
-import ai.leantech.delivery.model.Order;
 import ai.leantech.delivery.model.Product;
 import ai.leantech.delivery.repository.ProductRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,7 +13,6 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -1,6 +1,6 @@
 package ai.leantech.delivery.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -21,7 +21,7 @@ public class Role {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    @JsonBackReference
+    @JsonIgnoreProperties("roles")
     private Set<User> users;
 
 }

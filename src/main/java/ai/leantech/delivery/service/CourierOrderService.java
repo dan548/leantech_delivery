@@ -41,7 +41,7 @@ public class CourierOrderService {
                                          String sortDirection) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.getUserByAuthentication(auth);
-        Pageable page = PageRequest.of(offset, limit, Sort.Direction.fromString(sortDirection));
+        Pageable page = PageRequest.of(offset, limit, Sort.Direction.fromString(sortDirection), "createdAt");
         return orderRepository.findAll(
                 OrderSpecs.hasCustomerWithId(customerId)
                         .and(OrderSpecs.hasCourierWithId(user.getId()))

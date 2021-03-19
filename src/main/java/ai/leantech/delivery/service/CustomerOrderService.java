@@ -26,18 +26,15 @@ public class CustomerOrderService {
     private final OrderItemRepository orderItemRepository;
     private final UserService userService;
     private final OrderDtoConverter orderDtoConverter;
-    private final EntityByDtoService entityByDtoService;
 
     public CustomerOrderService(final OrderRepository orderRepository,
                                 final OrderItemRepository orderItemRepository,
                                 final UserService userService,
-                                final OrderDtoConverter orderDtoConverter,
-                                final EntityByDtoService entityByDtoService) {
+                                final OrderDtoConverter orderDtoConverter) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.userService = userService;
         this.orderDtoConverter = orderDtoConverter;
-        this.entityByDtoService = entityByDtoService;
     }
 
     public List<OrderResponse> getOrders(String status,
@@ -48,7 +45,7 @@ public class CustomerOrderService {
                                          String sortDirection) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.getUserByAuthentication(auth);
-        Pageable page = PageRequest.of(offset, limit, Sort.Direction.fromString(sortDirection));
+        Pageable page = PageRequest.of(offset, limit, Sort.Direction.fromString(sortDirection), "createdAt");
         return orderRepository.findAll(
                 OrderSpecs.hasCustomerWithId(user.getId())
                         .and(OrderSpecs.hasCourierWithId(courierId))
@@ -71,7 +68,7 @@ public class CustomerOrderService {
     public Order createOrder(CustomerOrderRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.getUserByAuthentication(auth);
-        Order order = entityByDtoService.convertDtoToOrder(request);
+        Order order = orderDtoConverter.convertDtoToOrder(request);
         OffsetDateTime now = OffsetDateTime.now();
         order.setCreatedAt(now);
         order.setUpdatedAt(now);

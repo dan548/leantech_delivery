@@ -13,6 +13,7 @@ import javax.persistence.*;
 public class OrderItem {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private int quantity;
     @ManyToOne

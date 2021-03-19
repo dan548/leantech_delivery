@@ -31,7 +31,7 @@ public class AdminOrderController {
             @RequestParam(name = "payment_type", required = false) String paymentType,
             @RequestParam(name = "customer", required = false) Long customerId,
             @RequestParam(name = "courier", required = false) Long courierId,
-            @RequestParam(name = "page", defaultValue = "1") Integer offset,
+            @RequestParam(name = "page", defaultValue = "0") Integer offset,
             @RequestParam(name = "size", defaultValue = "25") Integer limit,
             @RequestParam(name = "order", defaultValue = "DESC") String order
 

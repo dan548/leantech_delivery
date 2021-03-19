@@ -1,6 +1,6 @@
 package ai.leantech.delivery.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -29,7 +29,7 @@ public class User {
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @JsonManagedReference
+    @JsonIgnoreProperties("users")
     @EqualsAndHashCode.Exclude
     private Set<Role> roles;
 

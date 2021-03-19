@@ -6,7 +6,6 @@ import ai.leantech.delivery.controller.model.RegistrationRequest;
 import ai.leantech.delivery.controller.model.user.AdminRegistrationRequest;
 import ai.leantech.delivery.controller.model.user.UserDtoConverter;
 import ai.leantech.delivery.controller.model.user.UserResponse;
-import ai.leantech.delivery.model.Order;
 import ai.leantech.delivery.model.Role;
 import ai.leantech.delivery.model.RoleType;
 import ai.leantech.delivery.model.User;
@@ -114,7 +113,7 @@ public class UserService {
         if (!user.getPassword().equals(newUser.getPassword())) {
             newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         }
-        return userDtoConverter.convertUserToUserResp(newUser);
+        return userDtoConverter.convertUserToUserResp(userRepository.save(newUser));
     }
 
     private User applyPatchToUser(JsonPatch patch, User targetUser) throws JsonPatchException, JsonProcessingException {

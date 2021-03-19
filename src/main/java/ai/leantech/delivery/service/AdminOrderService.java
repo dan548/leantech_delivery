@@ -6,6 +6,7 @@ import ai.leantech.delivery.controller.model.order.OrderResponse;
 import ai.leantech.delivery.model.Order;
 import ai.leantech.delivery.model.OrderStatus;
 import ai.leantech.delivery.model.PaymentType;
+import ai.leantech.delivery.repository.OrderItemRepository;
 import ai.leantech.delivery.repository.OrderRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,27 +30,32 @@ import static java.util.stream.Collectors.toList;
 public class AdminOrderService {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ObjectMapper objectMapper;
     private final OrderDtoConverter orderDtoConverter;
-    private final EntityByDtoService entityByDtoService;
 
     public AdminOrderService(final OrderRepository orderRepository,
+                             final OrderItemRepository orderItemRepository,
                              final ObjectMapper objectMapper,
-                             final OrderDtoConverter orderDtoConverter,
-                             final EntityByDtoService entityByDtoService) {
+                             final OrderDtoConverter orderDtoConverter) {
         this.orderRepository = orderRepository;
+        this.orderItemRepository = orderItemRepository;
         this.objectMapper = objectMapper;
         this.orderDtoConverter = orderDtoConverter;
-        this.entityByDtoService = entityByDtoService;
     }
 
     public Order createOrder(AdminOrderRequest request) {
-        Order order = entityByDtoService.convertDtoToOrder(request);
+        Order order = orderDtoConverter.convertDtoToOrder(request);
         OffsetDateTime now = OffsetDateTime.now();
         order.setCreatedAt(now);
         order.setUpdatedAt(now);
         order.setStatus(OrderStatus.CREATED);
-        return orderRepository.save(order);
+        Order result = orderRepository.save(order);
+        order.getOrderItems().forEach(it -> {
+            it.setOrder(result);
+            orderItemRepository.save(it);
+        });
+        return result;
     }
 
     public List<OrderResponse> getOrders(String status,

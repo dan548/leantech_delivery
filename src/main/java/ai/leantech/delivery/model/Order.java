@@ -41,7 +41,7 @@ public class Order {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSSZ")
     private OffsetDateTime updatedAt;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<OrderItem> orderItems;
 
