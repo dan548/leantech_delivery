@@ -2,7 +2,6 @@ package ai.leantech.delivery.controller.model.order;
 
 import ai.leantech.delivery.model.*;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
