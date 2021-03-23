@@ -4,6 +4,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.annotation.ElementType;
@@ -16,6 +17,7 @@ import java.lang.annotation.Target;
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @ActiveProfiles
+@Sql("classpath:sql/init.sql")
 public @interface MyJpaTest {
-    @AliasFor(annotation = ActiveProfiles.class, attribute = "profiles") String[] activeProfiles() default {"test"};
+    @AliasFor(annotation = ActiveProfiles.class, attribute = "profiles") String[] activeProfiles() default {"jpatest"};
 }

@@ -17,6 +17,8 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
+import static ai.leantech.delivery.model.OrderSpecs.*;
+import static ai.leantech.delivery.model.OrderSpecs.isStatus;
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -86,5 +88,26 @@ public class CourierOrderService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.getUserByAuthentication(auth);
         return orderRepository.findById(id).filter(order -> order.getCourier().equals(user));
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getVacantOrders(String paymentType, Integer offset, Integer limit, String sortDirection) {
+        Pageable page = PageRequest.of(offset, limit, Sort.Direction.fromString(sortDirection), "createdAt");
+        return orderRepository.findAll(
+                hasNullCourier()
+                        .and(isPaymentType(PaymentType.findTypeByName(paymentType)))
+                        .and(isStatus(OrderStatus.CREATED)),
+                page)
+                .get()
+                .map(o -> OrderResponse.builder()
+                        .address(o.getAddress())
+                        .id(o.getId())
+                        .paymentType(o.getPaymentType())
+                        .created(o.getCreatedAt())
+                        .updated(o.getUpdatedAt())
+                        .status(o.getStatus())
+                        .items(o.getOrderItems())
+                        .build())
+                .collect(toList());
     }
 }

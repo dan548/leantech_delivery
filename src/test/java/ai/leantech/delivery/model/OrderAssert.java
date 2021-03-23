@@ -21,4 +21,14 @@ public class OrderAssert extends AbstractAssert<OrderAssert, Order> {
         }
         return this;
     }
+
+    public OrderAssert hasId() {
+        isNotNull();
+        if (actual.getId() == 0) {
+            failWithMessage(
+                    "Expected order to have an id, but it was 0"
+            );
+        }
+        return this;
+    }
 }
