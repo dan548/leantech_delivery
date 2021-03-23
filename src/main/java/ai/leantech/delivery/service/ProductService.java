@@ -11,12 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ProductService {
 
     private final ProductRepository prodRepo;
@@ -29,6 +31,7 @@ public class ProductService {
         this.objectMapper = objectMapper;
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> getProducts() {
         return prodRepo.findAll().stream()
                 .map(dtoConverter::convertProductToProductResp)
@@ -40,6 +43,7 @@ public class ProductService {
         return prodRepo.save(product);
     }
 
+    @Transactional(readOnly = true)
     public ProductResponse getProductById(Long id) {
         return prodRepo.findById(id).map(dtoConverter::convertProductToProductResp).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Product with id %s not found", id))

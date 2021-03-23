@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.OffsetDateTime;
@@ -27,6 +28,7 @@ import static ai.leantech.delivery.model.OrderSpecs.*;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@Transactional
 public class AdminOrderService {
 
     private final OrderRepository orderRepository;
@@ -58,6 +60,7 @@ public class AdminOrderService {
         return result;
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> getOrders(String status,
                                          String paymentType,
                                          Long customerId,
@@ -85,12 +88,14 @@ public class AdminOrderService {
                 .collect(toList());
     }
 
+    @Transactional(readOnly = true)
     public OrderResponse getOrderById(Long id) {
         return orderRepository.findById(id).map(orderDtoConverter::convertOrderToOrderResp).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Order with id %s not found", id))
         );
     }
 
+    @Transactional(readOnly = true)
     public Optional<Order> getOrderEntityById(Long id) {
         return orderRepository.findById(id);
     }

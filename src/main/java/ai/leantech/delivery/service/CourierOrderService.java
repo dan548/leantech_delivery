@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 @Service
+@Transactional
 public class CourierOrderService {
 
     private final OrderRepository orderRepository;
@@ -33,6 +35,7 @@ public class CourierOrderService {
         this.orderDtoConverter = orderDtoConverter;
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> getOrders(String status,
                                          String paymentType,
                                          Long customerId,
@@ -61,6 +64,7 @@ public class CourierOrderService {
                 .collect(toList());
     }
 
+    @Transactional(readOnly = true)
     public OrderResponse getOrderById(Long id) {
         return getOptionalOrderEntityById(id).map(orderDtoConverter::convertOrderToOrderResp).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Order with id %s not found", id))

@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -27,6 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserService {
 
     private final PasswordEncoder passwordEncoder;
@@ -63,10 +65,12 @@ public class UserService {
         roleRepository.save(userRole);
     }
 
+    @Transactional(readOnly = true)
     public User findByLogin(String login) {
         return userRepository.findByLogin(login);
     }
 
+    @Transactional(readOnly = true)
     public User findByLoginAndPassword(String login, String password) {
         User user = findByLogin(login);
         if (user != null) {
@@ -77,12 +81,14 @@ public class UserService {
         return null;
     }
 
+    @Transactional(readOnly = true)
     public AuthResponse authByLoginAndPassword(String login, String password) {
         User user = findByLoginAndPassword(login, password);
         String token = jwtProvider.generateToken(user.getLogin());
         return new AuthResponse(token);
     }
 
+    @Transactional(readOnly = true)
     public User getUserByAuthentication(Authentication authentication) {
         Object principal = authentication.getPrincipal();
         String login = principal instanceof UserDetails ? ((UserDetails) principal).getUsername() : principal.toString();
@@ -121,12 +127,14 @@ public class UserService {
         return objectMapper.treeToValue(patched, User.class);
     }
 
+    @Transactional(readOnly = true)
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(userDtoConverter::convertUserToUserResp)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
         return userRepository.findById(id).map(userDtoConverter::convertUserToUserResp).orElseThrow(
                 () -> new EntityNotFoundException(String.format("User with id %s not found", id))
