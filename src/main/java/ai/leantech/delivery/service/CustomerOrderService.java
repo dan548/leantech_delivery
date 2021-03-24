@@ -3,6 +3,8 @@ package ai.leantech.delivery.service;
 import ai.leantech.delivery.controller.model.order.CustomerOrderRequest;
 import ai.leantech.delivery.controller.model.order.OrderDtoConverter;
 import ai.leantech.delivery.controller.model.order.OrderResponse;
+import ai.leantech.delivery.entity.Order;
+import ai.leantech.delivery.entity.User;
 import ai.leantech.delivery.model.*;
 import ai.leantech.delivery.repository.OrderItemRepository;
 import ai.leantech.delivery.repository.OrderRepository;

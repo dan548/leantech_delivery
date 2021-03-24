@@ -1,6 +1,6 @@
 package ai.leantech.delivery.controller.model.user;
 
-import ai.leantech.delivery.model.Role;
+import ai.leantech.delivery.entity.Role;
 import lombok.Builder;
 import lombok.Getter;
 

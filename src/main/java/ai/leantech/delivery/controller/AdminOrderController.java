@@ -2,7 +2,7 @@ package ai.leantech.delivery.controller;
 
 import ai.leantech.delivery.controller.model.order.AdminOrderRequest;
 import ai.leantech.delivery.controller.model.order.OrderResponse;
-import ai.leantech.delivery.model.Order;
+import ai.leantech.delivery.entity.Order;
 import ai.leantech.delivery.service.AdminOrderService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;

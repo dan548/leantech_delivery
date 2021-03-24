@@ -1,5 +1,6 @@
 package ai.leantech.delivery.model;
 
+import ai.leantech.delivery.entity.Order;
 import org.assertj.core.api.AbstractAssert;
 
 public class OrderAssert extends AbstractAssert<OrderAssert, Order> {

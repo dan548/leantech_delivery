@@ -1,5 +1,9 @@
 package ai.leantech.delivery.controller.model.order;
 
+import ai.leantech.delivery.entity.Order;
+import ai.leantech.delivery.entity.OrderItem;
+import ai.leantech.delivery.entity.Product;
+import ai.leantech.delivery.entity.User;
 import ai.leantech.delivery.model.*;
 
 import java.util.List;

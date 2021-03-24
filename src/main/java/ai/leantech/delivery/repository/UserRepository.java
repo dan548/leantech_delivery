@@ -1,6 +1,6 @@
 package ai.leantech.delivery.repository;
 
-import ai.leantech.delivery.model.User;
+import ai.leantech.delivery.entity.User;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.transaction.annotation.Transactional;
 

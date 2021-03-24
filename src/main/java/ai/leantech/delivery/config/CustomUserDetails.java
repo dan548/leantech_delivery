@@ -1,6 +1,6 @@
 package ai.leantech.delivery.config;
 
-import ai.leantech.delivery.model.User;
+import ai.leantech.delivery.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

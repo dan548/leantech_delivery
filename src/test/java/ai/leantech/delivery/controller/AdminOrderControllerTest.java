@@ -2,7 +2,7 @@ package ai.leantech.delivery.controller;
 
 import ai.leantech.delivery.controller.model.order.AdminOrderRequest;
 import ai.leantech.delivery.controller.model.order.OrderResponse;
-import ai.leantech.delivery.model.Order;
+import ai.leantech.delivery.entity.Order;
 import ai.leantech.delivery.objectmother.AdminOrderRequestMother;
 import ai.leantech.delivery.objectmother.OrderResponseMother;
 import ai.leantech.delivery.service.AdminOrderService;
@@ -16,13 +16,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -95,6 +93,16 @@ class AdminOrderControllerTest {
                 .andExpect(status().isOk());
         when(adminOrderService.updateOrder(any(), any())).thenReturn(resp);
         verify(adminOrderService).updateOrder(eq(666L), any(JsonPatch.class));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void whenGetOrder_thenReturns200() throws Exception {
+        OrderResponse resp = OrderResponseMother.complete().build();
+        mockMvc.perform(get("/api/admin/orders/666"))
+                .andExpect(status().isOk());
+        when(adminOrderService.getOrderById(any(Long.class))).thenReturn(resp);
+        verify(adminOrderService).getOrderById(eq(666L));
     }
 
 }

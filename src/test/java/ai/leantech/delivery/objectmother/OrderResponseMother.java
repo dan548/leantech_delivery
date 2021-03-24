@@ -1,7 +1,7 @@
 package ai.leantech.delivery.objectmother;
 
 import ai.leantech.delivery.controller.model.order.OrderResponse;
-import ai.leantech.delivery.model.OrderItem;
+import ai.leantech.delivery.entity.OrderItem;
 import ai.leantech.delivery.model.OrderStatus;
 import ai.leantech.delivery.model.PaymentType;
 

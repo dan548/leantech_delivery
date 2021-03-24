@@ -1,16 +1,18 @@
-package ai.leantech.delivery.model;
+package ai.leantech.delivery.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
-@Data
 @Entity
 @Table(name = "users")
-@EqualsAndHashCode
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -32,5 +34,22 @@ public class User {
     @JsonIgnoreProperties("users")
     @EqualsAndHashCode.Exclude
     private Set<Role> roles;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        return id != null && id.equals(other.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return 282;
+    }
 
 }

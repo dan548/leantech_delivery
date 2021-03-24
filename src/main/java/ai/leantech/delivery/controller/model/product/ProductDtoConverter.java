@@ -1,6 +1,6 @@
 package ai.leantech.delivery.controller.model.product;
 
-import ai.leantech.delivery.model.Product;
+import ai.leantech.delivery.entity.Product;
 
 public class ProductDtoConverter {
 

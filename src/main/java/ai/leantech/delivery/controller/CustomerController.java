@@ -3,7 +3,7 @@ package ai.leantech.delivery.controller;
 import ai.leantech.delivery.controller.model.order.CustomerOrderRequest;
 import ai.leantech.delivery.controller.model.order.OrderResponse;
 import ai.leantech.delivery.controller.model.product.ProductResponse;
-import ai.leantech.delivery.model.Order;
+import ai.leantech.delivery.entity.Order;
 import ai.leantech.delivery.service.CustomerOrderService;
 import ai.leantech.delivery.service.ProductService;
 import org.springframework.http.ResponseEntity;

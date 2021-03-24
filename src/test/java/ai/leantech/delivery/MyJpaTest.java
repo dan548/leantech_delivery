@@ -17,7 +17,13 @@ import java.lang.annotation.Target;
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @ActiveProfiles
-@Sql("classpath:sql/init.sql")
+@Sql
 public @interface MyJpaTest {
-    @AliasFor(annotation = ActiveProfiles.class, attribute = "profiles") String[] activeProfiles() default {"jpatest"};
+
+    @AliasFor(annotation = ActiveProfiles.class, attribute = "profiles")
+    String[] activeProfiles() default {"jpatest"};
+
+    @AliasFor(annotation = Sql.class, attribute = "scripts")
+    String[] sqlScripts() default {"classpath:sql/init.sql"};
+
 }

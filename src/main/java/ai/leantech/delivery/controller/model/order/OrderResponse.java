@@ -1,6 +1,6 @@
 package ai.leantech.delivery.controller.model.order;
 
-import ai.leantech.delivery.model.OrderItem;
+import ai.leantech.delivery.entity.OrderItem;
 import ai.leantech.delivery.model.OrderStatus;
 import ai.leantech.delivery.model.PaymentType;
 import com.fasterxml.jackson.annotation.JsonFormat;

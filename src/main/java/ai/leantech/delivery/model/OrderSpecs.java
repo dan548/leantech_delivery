@@ -1,5 +1,8 @@
 package ai.leantech.delivery.model;
 
+import ai.leantech.delivery.entity.Order;
+import ai.leantech.delivery.entity.Order_;
+import ai.leantech.delivery.entity.User_;
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 

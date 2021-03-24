@@ -1,6 +1,6 @@
 package ai.leantech.delivery.controller.model.user;
 
-import ai.leantech.delivery.model.User;
+import ai.leantech.delivery.entity.User;
 
 public class UserDtoConverter {
 

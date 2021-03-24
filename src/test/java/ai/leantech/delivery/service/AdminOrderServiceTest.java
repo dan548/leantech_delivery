@@ -2,7 +2,7 @@ package ai.leantech.delivery.service;
 
 import ai.leantech.delivery.controller.model.order.AdminOrderRequest;
 import ai.leantech.delivery.controller.model.order.OrderDtoConverter;
-import ai.leantech.delivery.model.Order;
+import ai.leantech.delivery.entity.Order;
 import ai.leantech.delivery.model.PaymentType;
 import ai.leantech.delivery.repository.OrderItemRepository;
 import ai.leantech.delivery.repository.OrderRepository;
