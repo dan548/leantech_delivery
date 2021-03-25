@@ -95,6 +95,13 @@ public class UserService {
         return userRepository.findByLogin(login);
     }
 
+    @Transactional(readOnly = true)
+    public UserResponse getUserResponseByAuthentication(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        String login = principal instanceof UserDetails ? ((UserDetails) principal).getUsername() : principal.toString();
+        return userDtoConverter.convertUserToUserResp(userRepository.findByLogin(login));
+    }
+
     public void addNewUser(AdminRegistrationRequest request) {
         User user = new User();
         user.setLogin(request.getLogin());
