@@ -30,13 +30,17 @@ public class AdminProductController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> create(@RequestBody AdminProductRequest request) {
+    public ResponseEntity<ProductResponse> create(@RequestBody AdminProductRequest request) {
         Product createdProduct = productService.createProduct(request);
         URI location = UriComponentsBuilder.fromPath("/api/admin/products/")
                 .path(String.valueOf(createdProduct.getId()))
                 .build()
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(ProductResponse.builder()
+                .id(createdProduct.getId())
+                .name(createdProduct.getName())
+                .price(createdProduct.getPrice())
+                .build());
     }
 
     @GetMapping("/{id}")

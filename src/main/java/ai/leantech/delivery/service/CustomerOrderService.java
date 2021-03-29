@@ -11,8 +11,7 @@ import ai.leantech.delivery.repository.OrderRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,31 +47,20 @@ public class CustomerOrderService {
                                          Integer offset,
                                          Integer limit,
                                          String sortDirection) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.getUserByAuthentication(auth);
+        User user = userService.getUserByAuthentication();
         Pageable page = PageRequest.of(offset, limit, Sort.Direction.fromString(sortDirection), "createdAt");
-        return orderRepository.findAll(
-                OrderSpecs.hasCustomerWithId(user.getId())
-                        .and(OrderSpecs.hasCourierWithId(courierId))
-                        .and(OrderSpecs.isPaymentType(PaymentType.findTypeByName(paymentType)))
-                        .and(OrderSpecs.isStatus(OrderStatus.findStatusByName(status))),
-                page)
+        Specification<Order> spec = OrderSpecs.hasCustomerWithId(user.getId())
+                .and(OrderSpecs.hasCourierWithId(courierId))
+                .and(OrderSpecs.isPaymentType(PaymentType.findTypeByName(paymentType)))
+                .and(OrderSpecs.isStatus(OrderStatus.findStatusByName(status)));
+        return orderRepository.findAll(spec, page)
                 .get()
-                .map(o -> OrderResponse.builder()
-                        .address(o.getAddress())
-                        .id(o.getId())
-                        .paymentType(o.getPaymentType())
-                        .created(o.getCreatedAt())
-                        .updated(o.getUpdatedAt())
-                        .status(o.getStatus())
-                        .items(o.getOrderItems())
-                        .build())
+                .map(orderDtoConverter::convertOrderToOrderResp)
                 .collect(toList());
     }
 
-    public Order createOrder(CustomerOrderRequest request) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.getUserByAuthentication(auth);
+    public OrderResponse createOrder(CustomerOrderRequest request) {
+        User user = userService.getUserByAuthentication();
         Order order = orderDtoConverter.convertDtoToOrder(request);
         OffsetDateTime now = OffsetDateTime.now();
         order.setCreatedAt(now);
@@ -84,7 +72,7 @@ public class CustomerOrderService {
             it.setOrder(result);
             orderItemRepository.save(it);
         });
-        return result;
+        return orderDtoConverter.convertOrderToOrderResp(result);
     }
 
     @Transactional(readOnly = true)

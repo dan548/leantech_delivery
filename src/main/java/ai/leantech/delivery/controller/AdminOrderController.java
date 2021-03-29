@@ -1,6 +1,7 @@
 package ai.leantech.delivery.controller;
 
 import ai.leantech.delivery.controller.model.order.AdminOrderRequest;
+import ai.leantech.delivery.controller.model.order.OrderDtoConverter;
 import ai.leantech.delivery.controller.model.order.OrderResponse;
 import ai.leantech.delivery.entity.Order;
 import ai.leantech.delivery.service.AdminOrderService;
@@ -20,9 +21,12 @@ import java.util.List;
 public class AdminOrderController {
 
     private final AdminOrderService adminOrderService;
+    private final OrderDtoConverter orderDtoConverter;
 
-    public AdminOrderController(final AdminOrderService adminOrderService) {
+    public AdminOrderController(final AdminOrderService adminOrderService,
+                                final OrderDtoConverter orderDtoConverter) {
         this.adminOrderService = adminOrderService;
+        this.orderDtoConverter = orderDtoConverter;
     }
 
     @GetMapping()
@@ -40,13 +44,14 @@ public class AdminOrderController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> create(@RequestBody AdminOrderRequest request) {
+    public ResponseEntity<OrderResponse> create(@RequestBody AdminOrderRequest request) {
         Order createdOrder = adminOrderService.createOrder(request);
         URI location = UriComponentsBuilder.fromPath("/api/admin/orders/")
                 .path(String.valueOf(createdOrder.getId()))
                 .build()
                 .toUri();
-        return ResponseEntity.created(location).build();
+        OrderResponse resp = orderDtoConverter.convertOrderToOrderResp(createdOrder);
+        return ResponseEntity.created(location).body(resp);
     }
 
     @GetMapping("/{id}")

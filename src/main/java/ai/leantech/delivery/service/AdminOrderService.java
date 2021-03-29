@@ -16,6 +16,7 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,22 +70,13 @@ public class AdminOrderService {
                                          Integer limit,
                                          String sortDirection) {
         Pageable page = PageRequest.of(offset, limit, Sort.Direction.fromString(sortDirection), "createdAt");
-        return orderRepository.findAll(
-                hasCustomerWithId(customerId)
-                        .and(hasCourierWithId(courierId))
-                        .and(isPaymentType(PaymentType.findTypeByName(paymentType)))
-                        .and(isStatus(OrderStatus.findStatusByName(status))),
-                page)
+        Specification<Order> spec = hasCustomerWithId(customerId)
+                .and(hasCourierWithId(courierId))
+                .and(isPaymentType(PaymentType.findTypeByName(paymentType)))
+                .and(isStatus(OrderStatus.findStatusByName(status)));
+        return orderRepository.findAll(spec, page)
                 .get()
-                .map(o -> OrderResponse.builder()
-                        .address(o.getAddress())
-                        .id(o.getId())
-                        .paymentType(o.getPaymentType())
-                        .created(o.getCreatedAt())
-                        .updated(o.getUpdatedAt())
-                        .status(o.getStatus())
-                        .items(o.getOrderItems())
-                        .build())
+                .map(orderDtoConverter::convertOrderToOrderResp)
                 .collect(toList());
     }
 

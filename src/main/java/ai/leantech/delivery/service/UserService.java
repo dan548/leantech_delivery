@@ -17,6 +17,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,7 @@ public class UserService {
     private final UserDtoConverter userDtoConverter;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final SecurityContext securityContext = SecurityContextHolder.getContext();
 
     public UserService(final UserRepository userRepository,
                        final RoleRepository roleRepository,
@@ -52,17 +55,18 @@ public class UserService {
         this.userDtoConverter = userDtoConverter;
     }
 
-    public void addNewUser(RegistrationRequest registrationRequest, RoleType role) {
+    public UserResponse addNewUser(RegistrationRequest registrationRequest, RoleType role) {
         User user = new User();
         user.setLogin(registrationRequest.getLogin());
         Role userRole = roleRepository.findByName("ROLE_" + role)
                 .orElseThrow(RuntimeException::new);
         user.setRoles(Set.of(userRole));
         user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-        userRepository.save(user);
+        User result = userRepository.save(user);
         Set<User> roleUsers = userRole.getUsers();
         roleUsers.add(user);
         roleRepository.save(userRole);
+        return userDtoConverter.convertUserToUserResp(result);
     }
 
     @Transactional(readOnly = true)
@@ -84,13 +88,14 @@ public class UserService {
     @Transactional(readOnly = true)
     public AuthResponse authByLoginAndPassword(String login, String password) {
         User user = findByLoginAndPassword(login, password);
-        String token = jwtProvider.generateToken(user.getLogin());
+        String token = jwtProvider.generateToken(user.getLogin(), user.getRoles());
         return new AuthResponse(token);
     }
 
     @Transactional(readOnly = true)
-    public User getUserByAuthentication(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
+    public User getUserByAuthentication() {
+        Authentication auth = securityContext.getAuthentication();
+        Object principal = auth.getPrincipal();
         String login = principal instanceof UserDetails ? ((UserDetails) principal).getUsername() : principal.toString();
         return userRepository.findByLogin(login);
     }
@@ -102,7 +107,7 @@ public class UserService {
         return userDtoConverter.convertUserToUserResp(userRepository.findByLogin(login));
     }
 
-    public void addNewUser(AdminRegistrationRequest request) {
+    public UserResponse addNewUser(AdminRegistrationRequest request) {
         User user = new User();
         user.setLogin(request.getLogin());
         Set<Role> roles = request.getRoles().stream()
@@ -111,11 +116,12 @@ public class UserService {
                 .collect(Collectors.toSet());
         user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        userRepository.save(user);
+        User result = userRepository.save(user);
         roles.forEach(role -> {
             role.getUsers().add(user);
             roleRepository.save(role);
         });
+        return userDtoConverter.convertUserToUserResp(result);
     }
 
     public UserResponse editUser(Long id, JsonPatch patch) throws JsonPatchException, JsonProcessingException {

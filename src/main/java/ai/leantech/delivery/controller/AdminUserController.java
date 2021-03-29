@@ -27,9 +27,8 @@ public class AdminUserController {
     }
 
     @PostMapping()
-    public String registerUser(@RequestBody @Valid AdminRegistrationRequest request) {
-        userService.addNewUser(request);
-        return "OK";
+    public UserResponse registerUser(@RequestBody @Valid AdminRegistrationRequest request) {
+        return userService.addNewUser(request);
     }
 
     @GetMapping("/{id}")

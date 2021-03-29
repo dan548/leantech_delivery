@@ -3,6 +3,7 @@ package ai.leantech.delivery.controller;
 import ai.leantech.delivery.controller.model.AuthRequest;
 import ai.leantech.delivery.controller.model.AuthResponse;
 import ai.leantech.delivery.controller.model.RegistrationRequest;
+import ai.leantech.delivery.controller.model.user.UserResponse;
 import ai.leantech.delivery.model.RoleType;
 import ai.leantech.delivery.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +22,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) {
-        userService.addNewUser(registrationRequest, RoleType.CUSTOMER);
-        return "OK";
+    public UserResponse registerUser(@RequestBody @Valid RegistrationRequest registrationRequest) {
+        return userService.addNewUser(registrationRequest, RoleType.CUSTOMER);
     }
 
     @PostMapping("/auth")

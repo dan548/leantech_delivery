@@ -40,13 +40,13 @@ public class CustomerController {
     }
 
     @PostMapping("/orders")
-    public ResponseEntity<Void> create(@RequestBody CustomerOrderRequest request) {
-        Order createdOrder = customerOrderService.createOrder(request);
+    public ResponseEntity<OrderResponse> create(@RequestBody CustomerOrderRequest request) {
+        OrderResponse createdOrder = customerOrderService.createOrder(request);
         URI location = UriComponentsBuilder.fromPath("/api/customer/orders/")
                 .path(String.valueOf(createdOrder.getId()))
                 .build()
                 .toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(createdOrder);
     }
 
     @GetMapping("/orders/{id}")

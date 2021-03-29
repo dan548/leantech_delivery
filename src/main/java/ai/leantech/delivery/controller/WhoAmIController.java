@@ -19,6 +19,7 @@ public class WhoAmIController {
         this.service = service;
     }
 
+    // doesn't need
     @GetMapping
     @ResponseBody
     public UserResponse get() {

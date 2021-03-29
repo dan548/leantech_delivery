@@ -10,8 +10,7 @@ import ai.leantech.delivery.repository.OrderRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,25 +45,15 @@ public class CourierOrderService {
                                          Integer offset,
                                          Integer limit,
                                          String sortDirection) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.getUserByAuthentication(auth);
+        User user = userService.getUserByAuthentication();
         Pageable page = PageRequest.of(offset, limit, Sort.Direction.fromString(sortDirection), "createdAt");
-        return orderRepository.findAll(
-                OrderSpecs.hasCustomerWithId(customerId)
-                        .and(OrderSpecs.hasCourierWithId(user.getId()))
-                        .and(OrderSpecs.isPaymentType(PaymentType.findTypeByName(paymentType)))
-                        .and(OrderSpecs.isStatus(OrderStatus.findStatusByName(status))),
-                page)
+        Specification<Order> spec = OrderSpecs.hasCustomerWithId(customerId)
+                .and(OrderSpecs.hasCourierWithId(user.getId()))
+                .and(OrderSpecs.isPaymentType(PaymentType.findTypeByName(paymentType)))
+                .and(OrderSpecs.isStatus(OrderStatus.findStatusByName(status)));
+        return orderRepository.findAll(spec, page)
                 .get()
-                .map(o -> OrderResponse.builder()
-                        .address(o.getAddress())
-                        .id(o.getId())
-                        .paymentType(o.getPaymentType())
-                        .created(o.getCreatedAt())
-                        .updated(o.getUpdatedAt())
-                        .status(o.getStatus())
-                        .items(o.getOrderItems())
-                        .build())
+                .map(orderDtoConverter::convertOrderToOrderResp)
                 .collect(toList());
     }
 
@@ -87,29 +76,19 @@ public class CourierOrderService {
     }
 
     private Optional<Order> getOptionalOrderEntityById(Long id) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.getUserByAuthentication(auth);
+        User user = userService.getUserByAuthentication();
         return orderRepository.findById(id).filter(order -> order.getCourier().equals(user));
     }
 
     @Transactional(readOnly = true)
     public List<OrderResponse> getVacantOrders(String paymentType, Integer offset, Integer limit, String sortDirection) {
         Pageable page = PageRequest.of(offset, limit, Sort.Direction.fromString(sortDirection), "createdAt");
-        return orderRepository.findAll(
-                hasNullCourier()
-                        .and(isPaymentType(PaymentType.findTypeByName(paymentType)))
-                        .and(isStatus(OrderStatus.CREATED)),
-                page)
+        Specification<Order> spec = hasNullCourier()
+                .and(isPaymentType(PaymentType.findTypeByName(paymentType)))
+                .and(isStatus(OrderStatus.CREATED));
+        return orderRepository.findAll(spec, page)
                 .get()
-                .map(o -> OrderResponse.builder()
-                        .address(o.getAddress())
-                        .id(o.getId())
-                        .paymentType(o.getPaymentType())
-                        .created(o.getCreatedAt())
-                        .updated(o.getUpdatedAt())
-                        .status(o.getStatus())
-                        .items(o.getOrderItems())
-                        .build())
+                .map(orderDtoConverter::convertOrderToOrderResp)
                 .collect(toList());
     }
 }
