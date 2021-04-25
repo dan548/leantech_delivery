@@ -1,6 +1,6 @@
 package ai.leantech.delivery.config;
 
-import ai.leantech.delivery.model.User;
+import ai.leantech.delivery.entity.User;
 import ai.leantech.delivery.service.UserService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

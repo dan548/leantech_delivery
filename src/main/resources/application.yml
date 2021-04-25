@@ -8,6 +8,12 @@ spring:
     driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
 jwt:
   issuer: 'd.poliakov@yahoo.com'
-  signingKey: '210718sECret228'
+  signingKey: '210718sECret228saAtAnAperKeleVoiVittu'
+parameters:
+  min-page-size: 10
+  max-page-size: 50

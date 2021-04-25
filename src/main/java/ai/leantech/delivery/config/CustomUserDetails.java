@@ -1,12 +1,12 @@
 package ai.leantech.delivery.config;
 
-import ai.leantech.delivery.model.User;
+import ai.leantech.delivery.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails {
 
@@ -18,7 +18,9 @@ public class CustomUserDetails implements UserDetails {
         CustomUserDetails c = new CustomUserDetails();
         c.login = user.getLogin();
         c.password = user.getPassword();
-        c.grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName()));
+        c.grantedAuthorities = user.getRoles().stream()
+                .map(it -> new SimpleGrantedAuthority(it.getName()))
+                .collect(Collectors.toList());
         return c;
     }
 

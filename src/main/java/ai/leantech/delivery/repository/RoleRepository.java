@@ -1,10 +1,14 @@
 package ai.leantech.delivery.repository;
 
-import ai.leantech.delivery.model.Role;
-import org.springframework.data.jpa.repository.JpaRepository;
+import ai.leantech.delivery.entity.Role;
+import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface RoleRepository extends JpaRepository<Role, Integer> {
+import java.util.Optional;
 
-    Role findByName(String name);
+public interface RoleRepository extends JpaRepositoryImplementation<Role, Long> {
+
+    @Transactional(readOnly = true)
+    Optional<Role> findByName(String name);
 
 }
