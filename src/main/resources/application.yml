@@ -17,3 +17,4 @@ jwt:
 parameters:
   min-page-size: 10
   max-page-size: 50
+junk_base_url: https://jsonplaceholder.typicode.com
